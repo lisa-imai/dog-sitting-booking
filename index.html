@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Dog Sitting - Lisa's Potrero Pup Care</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .form-section {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .time-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .checkbox-group label {
+            margin: 0;
+            font-weight: 500;
+        }
+        
+        .price-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 25px 0;
+        }
+        
+        .price-display h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        
+        .price-display .price {
+            font-size: 48px;
+            font-weight: bold;
+        }
+        
+        .price-breakdown {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        
+        .price-breakdown div {
+            margin: 5px 0;
+        }
+        
+        #map {
+            height: 300px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            margin-top: 10px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .info-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #856404;
+            display: none;
+        }
+        
+        .error-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #721c24;
+            display: none;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #155724;
+            display: none;
+        }
+        
+        @media (max-width: 640px) {
+            .time-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .price-display .price {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐕 Book Your Dog Sitting Visit</h1>
+            <p>See your price instantly as you fill out the form</p>
+        </div>
+        
+        <div class="form-section">
+            <form id="bookingForm">
+                <div class="form-group">
+                    <label>Visit Date *</label>
+                    <input type="date" id="visitDate" name="visitDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Visit Times *</label>
+                    <div class="time-group">
+                        <div>
+                            <input type="time" id="startTime" name="startTime" required>
+                            <small style="color: #666;">Start time</small>
+                        </div>
+                        <div>
+                            <input type="time" id="endTime" name="endTime" required>
+                            <small style="color: #666;">End time</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Add-Ons</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="puppycare" name="puppycare" value="yes" onchange="calculatePrice()">
+                        <label for="puppycare">Puppy/High Attention Dog/Additional Dog (+$5/hr)</label>
+                    </div>
+                </div>
+                
+                <div class="price-display">
+                    <h2>Your Total Price</h2>
+                    <div class="price" id="totalPrice">$0</div>
+                    <div id="priceBreakdown" class="price-breakdown" style="display: none;"></div>
+                </div>
+                
+                <div class="info-box">
+                    ℹ️ <strong>Available hours:</strong> 8am-10pm daily. Weekday visits up to 12 hours, weekend visits up to 6 hours.
+                </div>
+                
+                <div class="form-group">
+                    <label>Your Location</label>
+                    <small style="color: #666; display: block; margin-bottom: 10px;">
+                        Click on the map to show your approximate location, OR enter an address/landmark below
+                    </small>
+                    <div id="map"></div>
+                    <div id="locationWarning" class="warning-box"></div>
+                    <div id="locationError" class="error-box"></div>
+                    <div id="locationSuccess" class="success-box"></div>
+                    <input type="hidden" id="latitude" name="latitude">
+                    <input type="hidden" id="longitude" name="longitude">
+                </div>
+                
+                <div class="form-group">
+                    <label>Approximate Address or Landmark</label>
+                    <input type="text" id="addressText" name="addressText" placeholder="e.g., near Crane Cove Park, near Esprit Park, 22nd & Tennessee">
+                    <small style="color: #666;">Either click the map above OR enter your location here</small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Your Name *</label>
+                    <input type="text" id="clientName" name="clientName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Phone Number *</label>
+                    <input type="tel" id="clientPhone" name="clientPhone" required>
+                    <small style="color: #666;">I'll text you to confirm your booking</small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Dog's Name *</label>
+                    <input type="text" id="dogName" name="dogName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tell me about your dog (breed, age, temperament, special needs) *</label>
+                    <textarea id="dogInfo" name="dogInfo" rows="4" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>What do you need during the visit? *</label>
+                    <textarea id="visitNeeds" name="visitNeeds" rows="3" placeholder="e.g., feeding at 12pm, potty breaks every 2 hours, walks around the block, playtime, medication, just companionship while working from home, etc." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Additional Notes or Questions</label>
+                    <textarea id="notes" name="notes" rows="3" placeholder="Any special instructions, medication needs, or questions..."></textarea>
+                </div>
+                
+                <button type="submit">Submit Booking Request</button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script>
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('visitDate').min = today;
+        
+        // Initialize map centered on 18th & Arkansas
+        const myLocation = [37.762461, -122.398479];
+        const map = L.map('map').setView(myLocation, 14);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        // Green zone: under 8 min bike - using your exact coordinates
+        const greenZone = L.polygon([
+            [37.75475093239227, -122.39506120552342],
+            [37.758362, -122.382407],
+            [37.766897066342054, -122.3867296683145],
+            [37.77110364209186, -122.39111016725938],
+            [37.7715785630298, -122.39523298979576],
+            [37.769814555598245, -122.39884045951504],
+            [37.77259624048222, -122.40150311573649],
+            [37.771307180010204, -122.40880394731128],
+            [37.76330093284833, -122.41404336761792],
+            [37.75848319698305, -122.40407987982172]
+        ], {
+            color: '#28a745',
+            fillColor: '#28a745',
+            fillOpacity: 0.15,
+            weight: 2
+        }).addTo(map);
+        
+        // Yellow zone: 8-15 min bike - using your exact coordinates
+        const yellowZone = L.polygon([
+            [37.74920429287779, -122.4020295905049],
+            [37.74635385950096, -122.38665858499155],
+            [37.760062081173054, -122.38202839783884],
+            [37.77356423270298, -122.38108604224885],
+            [37.78455411427937, -122.38752352822766],
+            [37.78557161340092, -122.40288789738966],
+            [37.77459399583506, -122.4189169139475],
+            [37.76230130193869, -122.43080591403114],
+            [37.74750761955135, -122.41215576831415]
+        ], {
+            color: '#ffc107',
+            fillColor: '#ffc107',
+            fillOpacity: 0.08,
+            weight: 2
+        }).addTo(map);
+        
+        // Add a marker for your location with a simple circle icon
+        L.circleMarker(myLocation, {
+            radius: 8,
+            fillColor: '#007bff',
+            color: '#fff',
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 1
+        }).addTo(map).bindPopup('My location (18th & Arkansas)');
+        
+        let marker = null;
+        
+        // Add click event to map
+        map.on('click', function(e) {
+            const lat = e.latlng.lat;
+            const lng = e.latlng.lng;
+            const point = [lat, lng];
+            
+            // Remove old marker if exists
+            if (marker) {
+                map.removeLayer(marker);
+            }
+            
+            // Add new marker as a simple circle
+            marker = L.circleMarker(point, {
+                radius: 10,
+                fillColor: '#dc3545',
+                color: '#fff',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.8
+            }).addTo(map);
+            
+            // Store coordinates
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+            
+            // Check which zone the point is in using proper point-in-polygon detection
+            const warningBox = document.getElementById('locationWarning');
+            const errorBox = document.getElementById('locationError');
+            const successBox = document.getElementById('locationSuccess');
+            
+            // Check if point is inside green polygon first (most specific)
+            const isInGreen = isPointInPolygon(point, greenZone.getLatLngs()[0]);
+            const isInYellow = isPointInPolygon(point, yellowZone.getLatLngs()[0]);
+            
+            if (isInGreen) {
+                warningBox.style.display = 'none';
+                errorBox.style.display = 'none';
+                successBox.style.display = 'block';
+                successBox.textContent = '✓ Perfect! You\'re in my ideal service area (no travel fee).';
+            } else if (isInYellow) {
+                successBox.style.display = 'none';
+                errorBox.style.display = 'none';
+                warningBox.style.display = 'block';
+                warningBox.textContent = '⚠️ You\'re in my extended service area. For visits under 3 hours, there may be a $10 travel fee.';
+            } else {
+                successBox.style.display = 'none';
+                warningBox.style.display = 'none';
+                errorBox.style.display = 'block';
+                errorBox.textContent = '⚠️ You appear to be outside my typical service area. Please submit your request and I\'ll let you know if I can accommodate your location!';
+            }
+        });
+        
+        // Point-in-polygon algorithm (ray casting)
+        function isPointInPolygon(point, polygon) {
+            const x = point[0], y = point[1];
+            let inside = false;
+            
+            for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+                const xi = polygon[i].lat, yi = polygon[i].lng;
+                const xj = polygon[j].lat, yj = polygon[j].lng;
+                
+                const intersect = ((yi > y) !== (yj > y))
+                    && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+                if (intersect) inside = !inside;
+            }
+            
+            return inside;
+        }
+        
+        // Calculate distance between two points (Haversine formula) - keeping for potential future use
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // Earth radius in meters
+            const φ1 = lat1 * Math.PI / 180;
+            const φ2 = lat2 * Math.PI / 180;
+            const Δφ = (lat2 - lat1) * Math.PI / 180;
+            const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                    Math.cos(φ1) * Math.cos(φ2) *
+                    Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            return R * c; // Distance in meters
+        }
+        
+        // Add event listeners for price calculation
+        document.getElementById('startTime').addEventListener('change', calculatePrice);
+        document.getElementById('endTime').addEventListener('change', calculatePrice);
+        document.getElementById('visitDate').addEventListener('change', calculatePrice);
+        
+        function calculatePrice() {
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+            const visitDate = document.getElementById('visitDate').value;
+            const puppyCare = document.getElementById('puppycare').checked;
+            
+            if (!startTime || !endTime || !visitDate) {
+                document.getElementById('totalPrice').textContent = '$0';
+                document.getElementById('priceBreakdown').style.display = 'none';
+                return;
+            }
+            
+            // Validate time range (8am-10pm)
+            const startHour = parseInt(startTime.split(':')[0]);
+            const endTimeParts = endTime.split(':');
+            const endHr = parseInt(endTimeParts[0]);
+            const endMin = parseInt(endTimeParts[1]);
+            
+            if (startHour < 8) {
+                document.getElementById('totalPrice').textContent = 'Invalid time';
+                document.getElementById('priceBreakdown').innerHTML = '<div>Start time must be 8am or later</div>';
+                document.getElementById('priceBreakdown').style.display = 'block';
+                return;
+            }
+            
+            if (endHr > 22 || (endHr === 22 && endMin > 0)) {
+                document.getElementById('totalPrice').textContent = 'Invalid time';
+                document.getElementById('priceBreakdown').innerHTML = '<div>End time must be 10pm or earlier</div>';
+                document.getElementById('priceBreakdown').style.display = 'block';
+                return;
+            }
+            
+            // Calculate hours
+            const start = new Date(`2000-01-01T${startTime}`);
+            const end = new Date(`2000-01-01T${endTime}`);
+            let hours = (end - start) / (1000 * 60 * 60);
+            
+            if (hours <= 0) {
+                document.getElementById('totalPrice').textContent = 'Invalid time range';
+                document.getElementById('priceBreakdown').innerHTML = '<div>End time must be after start time</div>';
+                document.getElementById('priceBreakdown').style.display = 'block';
+                return;
+            }
+            
+            // Check if it's evening (ending after 6pm) or weekend
+            const date = new Date(visitDate);
+            const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+            const isEvening = endHr >= 18;
+            
+            // Calculate base price with 10% discount for website bookings
+            let basePrice = 0;
+            let breakdown = [];
+            
+            if (hours <= 0.5) {
+                basePrice = 30;
+                breakdown.push('30-minute visit: $30');
+            } else if (hours <= 1) {
+                basePrice = 40;
+                breakdown.push('1-hour visit: $40');
+            } else if (hours <= 2) {
+                basePrice = 59;
+                breakdown.push('2-hour visit: $59');
+            } else if (hours <= 4) {
+                basePrice = 69;
+                breakdown.push('3-4 hour visit: $69');
+            } else if (hours <= 8) {
+                basePrice = 79;
+                breakdown.push('5-8 hour visit: $79');
+            } else if (hours <= 12) {
+                const extraHours = Math.ceil(hours - 8);
+                basePrice = 79 + (extraHours * 10);
+                breakdown.push(`8 hours: $79`);
+                breakdown.push(`+${extraHours} extra hour(s): $${extraHours * 10}`);
+            } else {
+                document.getElementById('totalPrice').textContent = 'Too long';
+                document.getElementById('priceBreakdown').innerHTML = '<div>Maximum 12 hours on weekdays, 6 hours on weekends</div>';
+                document.getElementById('priceBreakdown').style.display = 'block';
+                return;
+            }
+            
+            // Add evening/weekend premium
+            if (isEvening || isWeekend) {
+                basePrice += 10;
+                breakdown.push(`${isWeekend ? 'Weekend' : 'Evening'} premium: +$10`);
+            }
+            
+            // Add puppy care
+            if (puppyCare) {
+                const puppyFee = Math.ceil(hours * 5);
+                basePrice += puppyFee;
+                breakdown.push(`Puppy/Extra care (${Math.ceil(hours)} hr): +$${puppyFee}`);
+            }
+            
+            document.getElementById('totalPrice').textContent = `$${basePrice}`;
+            document.getElementById('priceBreakdown').innerHTML = breakdown.map(line => `<div>${line}</div>`).join('');
+            document.getElementById('priceBreakdown').style.display = 'block';
+        }
+        
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Check if either location is provided
+            const hasMapLocation = document.getElementById('latitude').value;
+            const hasAddressText = document.getElementById('addressText').value.trim();
+            
+            if (!hasMapLocation && !hasAddressText) {
+                alert('Please either click on the map to show your location OR enter an approximate address/landmark!');
+                return;
+            }
+            
+            const visitDate = document.getElementById('visitDate').value;
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+            const puppyCare = document.getElementById('puppycare').checked;
+            const totalPrice = document.getElementById('totalPrice').textContent;
+            const priceBreakdown = document.getElementById('priceBreakdown').innerText;
+            const clientName = document.getElementById('clientName').value;
+            const clientPhone = document.getElementById('clientPhone').value;
+            const dogName = document.getElementById('dogName').value;
+            const dogInfo = document.getElementById('dogInfo').value;
+            const addressText = document.getElementById('addressText').value;
+            const notes = document.getElementById('notes').value;
+            const lat = document.getElementById('latitude').value;
+            const lng = document.getElementById('longitude').value;
+            
+            const subject = `Booking Request: ${dogName} on ${visitDate}`;
+            const body = `
+NEW BOOKING REQUEST
+
+Date: ${visitDate}
+Time: ${startTime} - ${endTime}
+Puppy/Extra Care: ${puppyCare ? 'Yes' : 'No'}
+TOTAL PRICE: ${totalPrice}
+
+PRICE BREAKDOWN:
+${priceBreakdown}
+
+CLIENT INFO:
+Name: ${clientName}
+Phone: ${clientPhone}
+Approximate Location: ${addressText || 'See map coordinates'}
+Map Coordinates: ${lat}, ${lng}
+Google Maps Link: https://www.google.com/maps?q=${lat},${lng}
+
+DOG INFO:
+Name: ${dogName}
+Details: ${dogInfo}
+
+VISIT NEEDS:
+${visitNeeds}
+
+ADDITIONAL NOTES:
+${notes || 'None'}
+            `.trim();
+            
+            // Encode email to make it slightly less obvious to scrapers
+            const email = atob('cGFuZGFzNGxpc2FAZ21haWwuY29t'); // pandas4lisa@gmail.com
+            
+            window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            
+            alert('✅ Opening your email app! Please send the email to complete your booking request. I\'ll text you within 24 hours to confirm.');
+        });
+    </script>
+</body>
+</html>

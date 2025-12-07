@@ -14,7 +14,7 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #F5EFE7 0%, #E8DFD0 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -29,7 +29,7 @@
         }
         
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #7EADB7 0%, #6B9BA5 100%);
             color: white;
             padding: 30px;
             text-align: center;
@@ -71,7 +71,7 @@
         
         input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #7EADB7;
         }
         
         .time-group {
@@ -100,7 +100,7 @@
         }
         
         .price-display {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #7EADB7 0%, #6B9BA5 100%);
             color: white;
             padding: 25px;
             border-radius: 8px;
@@ -142,7 +142,7 @@
         button {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #7EADB7 0%, #6B9BA5 100%);
             color: white;
             border: none;
             border-radius: 8px;
@@ -154,52 +154,58 @@
         
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 25px rgba(126, 173, 183, 0.4);
         }
         
         button:active {
             transform: translateY(0);
         }
         
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
         .info-box {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
+            background: #F9E79F;
+            border-left: 4px solid #F7DC6F;
             padding: 15px;
             margin-bottom: 20px;
             border-radius: 4px;
             font-size: 14px;
+            color: #7D6608;
         }
         
         .warning-box {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
+            background: #F9E79F;
+            border-left: 4px solid #F7DC6F;
             padding: 15px;
             margin-top: 10px;
             border-radius: 4px;
             font-size: 14px;
-            color: #856404;
+            color: #7D6608;
             display: none;
         }
         
         .error-box {
-            background: #f8d7da;
-            border-left: 4px solid #dc3545;
+            background: #E8B4A1;
+            border-left: 4px solid #8B5A44;
             padding: 15px;
             margin-top: 10px;
             border-radius: 4px;
             font-size: 14px;
-            color: #721c24;
+            color: #5C2E1F;
             display: none;
         }
         
         .success-box {
-            background: #d4edda;
-            border-left: 4px solid #28a745;
+            background: #C7D3BF;
+            border-left: 4px solid #7A876D;
             padding: 15px;
             margin-top: 10px;
             border-radius: 4px;
             font-size: 14px;
-            color: #155724;
+            color: #3D4736;
             display: none;
         }
         
@@ -330,7 +336,7 @@
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
         
-        // Green zone: under 8 min bike - using your exact coordinates
+        // Green zone: under 8 min bike
         const greenZone = L.polygon([
             [37.75475093239227, -122.39506120552342],
             [37.758362, -122.382407],
@@ -343,13 +349,13 @@
             [37.76330093284833, -122.41404336761792],
             [37.75848319698305, -122.40407987982172]
         ], {
-            color: '#28a745',
-            fillColor: '#28a745',
+            color: '#7A876D',
+            fillColor: '#7A876D',
             fillOpacity: 0.15,
             weight: 2
         }).addTo(map);
         
-        // Yellow zone: 8-15 min bike - using your exact coordinates
+        // Yellow zone: 8-15 min bike
         const yellowZone = L.polygon([
             [37.74920429287779, -122.4020295905049],
             [37.74635385950096, -122.38665858499155],
@@ -361,16 +367,16 @@
             [37.76230130193869, -122.43080591403114],
             [37.74750761955135, -122.41215576831415]
         ], {
-            color: '#ffc107',
-            fillColor: '#ffc107',
-            fillOpacity: 0.08,
+            color: '#F7DC6F',
+            fillColor: '#F7DC6F',
+            fillOpacity: 0.1,
             weight: 2
         }).addTo(map);
         
-        // Add a marker for your location with a simple circle icon
+        // Add marker for your location
         L.circleMarker(myLocation, {
             radius: 8,
-            fillColor: '#007bff',
+            fillColor: '#7EADB7',
             color: '#fff',
             weight: 2,
             opacity: 1,
@@ -385,31 +391,26 @@
             const lng = e.latlng.lng;
             const point = [lat, lng];
             
-            // Remove old marker if exists
             if (marker) {
                 map.removeLayer(marker);
             }
             
-            // Add new marker as a simple circle
             marker = L.circleMarker(point, {
                 radius: 10,
-                fillColor: '#dc3545',
+                fillColor: '#E8A48D',
                 color: '#fff',
                 weight: 2,
                 opacity: 1,
                 fillOpacity: 0.8
             }).addTo(map);
             
-            // Store coordinates
             document.getElementById('latitude').value = lat;
             document.getElementById('longitude').value = lng;
             
-            // Check which zone the point is in using proper point-in-polygon detection
             const warningBox = document.getElementById('locationWarning');
             const errorBox = document.getElementById('locationError');
             const successBox = document.getElementById('locationSuccess');
             
-            // Check if point is inside green polygon first (most specific)
             const isInGreen = isPointInPolygon(point, greenZone.getLatLngs()[0]);
             const isInYellow = isPointInPolygon(point, yellowZone.getLatLngs()[0]);
             
@@ -431,7 +432,7 @@
             }
         });
         
-        // Point-in-polygon algorithm (ray casting)
+        // Point-in-polygon algorithm
         function isPointInPolygon(point, polygon) {
             const x = point[0], y = point[1];
             let inside = false;
@@ -446,22 +447,6 @@
             }
             
             return inside;
-        }
-        
-        // Calculate distance between two points (Haversine formula) - keeping for potential future use
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371e3; // Earth radius in meters
-            const φ1 = lat1 * Math.PI / 180;
-            const φ2 = lat2 * Math.PI / 180;
-            const Δφ = (lat2 - lat1) * Math.PI / 180;
-            const Δλ = (lon2 - lon1) * Math.PI / 180;
-
-            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                    Math.cos(φ1) * Math.cos(φ2) *
-                    Math.sin(Δλ/2) * Math.sin(Δλ/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-            return R * c; // Distance in meters
         }
         
         // Add event listeners for price calculation
@@ -481,7 +466,6 @@
                 return;
             }
             
-            // Validate time range (8am-10pm)
             const startHour = parseInt(startTime.split(':')[0]);
             const endTimeParts = endTime.split(':');
             const endHr = parseInt(endTimeParts[0]);
@@ -501,7 +485,6 @@
                 return;
             }
             
-            // Calculate hours
             const start = new Date(`2000-01-01T${startTime}`);
             const end = new Date(`2000-01-01T${endTime}`);
             let hours = (end - start) / (1000 * 60 * 60);
@@ -513,12 +496,10 @@
                 return;
             }
             
-            // Check if it's evening (ending after 6pm) or weekend
             const date = new Date(visitDate);
             const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-            const isEvening = endHr >= 18;
+            const isEvening = endHr > 18 || (endHr === 18 && endMin > 0);
             
-            // Calculate base price with 10% discount for website bookings
             let basePrice = 0;
             let breakdown = [];
             
@@ -540,8 +521,8 @@
             } else if (hours <= 12) {
                 const extraHours = Math.ceil(hours - 8);
                 basePrice = 79 + (extraHours * 10);
-                breakdown.push(`8 hours: $79`);
-                breakdown.push(`+${extraHours} extra hour(s): $${extraHours * 10}`);
+                breakdown.push('8 hours: $79');
+                breakdown.push(`+${extraHours} additional hour(s): ${extraHours * 10}`);
             } else {
                 document.getElementById('totalPrice').textContent = 'Too long';
                 document.getElementById('priceBreakdown').innerHTML = '<div>Maximum 12 hours on weekdays, 6 hours on weekends</div>';
@@ -549,13 +530,11 @@
                 return;
             }
             
-            // Add evening/weekend premium
             if (isEvening || isWeekend) {
                 basePrice += 10;
                 breakdown.push(`${isWeekend ? 'Weekend' : 'Evening'} premium: +$10`);
             }
             
-            // Add puppy care
             if (puppyCare) {
                 const puppyFee = Math.ceil(hours * 5);
                 basePrice += puppyFee;
@@ -567,10 +546,9 @@
             document.getElementById('priceBreakdown').style.display = 'block';
         }
         
-        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+        document.getElementById('bookingForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Check if either location is provided
             const hasMapLocation = document.getElementById('latitude').value;
             const hasAddressText = document.getElementById('addressText').value.trim();
             
@@ -589,47 +567,73 @@
             const clientPhone = document.getElementById('clientPhone').value;
             const dogName = document.getElementById('dogName').value;
             const dogInfo = document.getElementById('dogInfo').value;
+            const visitNeeds = document.getElementById('visitNeeds').value;
             const addressText = document.getElementById('addressText').value;
             const notes = document.getElementById('notes').value;
-            const lat = document.getElementById('latitude').value;
-            const lng = document.getElementById('longitude').value;
+            const lat = document.getElementById('latitude').value || 'Not provided';
+            const lng = document.getElementById('longitude').value || 'Not provided';
             
-            const subject = `Booking Request: ${dogName} on ${visitDate}`;
-            const body = `
-NEW BOOKING REQUEST
-
-Date: ${visitDate}
-Time: ${startTime} - ${endTime}
-Puppy/Extra Care: ${puppyCare ? 'Yes' : 'No'}
-TOTAL PRICE: ${totalPrice}
-
-PRICE BREAKDOWN:
-${priceBreakdown}
-
-CLIENT INFO:
-Name: ${clientName}
-Phone: ${clientPhone}
-Approximate Location: ${addressText || 'See map coordinates'}
-Map Coordinates: ${lat}, ${lng}
-Google Maps Link: https://www.google.com/maps?q=${lat},${lng}
-
-DOG INFO:
-Name: ${dogName}
-Details: ${dogInfo}
-
-VISIT NEEDS:
-${visitNeeds}
-
-ADDITIONAL NOTES:
-${notes || 'None'}
-            `.trim();
+            const date = new Date(visitDate);
+            const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+            const endHr = parseInt(endTime.split(':')[0]);
+            const isEvening = endHr >= 18;
             
-            // Encode email to make it slightly less obvious to scrapers
-            const email = atob('cGFuZGFzNGxpc2FAZ21haWwuY29t'); // pandas4lisa@gmail.com
+            let addOns = [];
+            if (puppyCare) addOns.push('Puppy/High Attention/Extra Dog');
+            if (isEvening || isWeekend) addOns.push(isWeekend ? 'Weekend' : 'Evening');
+            const addOnsText = addOns.length > 0 ? addOns.join(', ') : 'None';
             
-            window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            const formId = '1FAIpQLSefT3pa4j6kmPbqt58UcVVWXR19rKJjP3PiV6oPar8vTzCMtA';
+            const formUrl = `https://docs.google.com/forms/d/e/${formId}/formResponse`;
             
-            alert('✅ Opening your email app! Please send the email to complete your booking request. I\'ll text you within 24 hours to confirm.');
+            const formData = new FormData();
+            formData.append('entry.387284207', visitDate);
+            formData.append('entry.374430019', startTime);
+            formData.append('entry.1645495669', endTime);
+            formData.append('entry.2131165718', addOnsText);
+            formData.append('entry.593230334', totalPrice);
+            formData.append('entry.1314476219', priceBreakdown);
+            formData.append('entry.713893957', `${lat}, ${lng}`);
+            formData.append('entry.163624744', addressText || 'Map pin only');
+            formData.append('entry.1655241211', clientName);
+            formData.append('entry.1815152838', clientPhone);
+            formData.append('entry.2053672442', dogName);
+            formData.append('entry.935826432', dogInfo);
+            formData.append('entry.777320243', visitNeeds);
+            formData.append('entry.1987686161', notes || 'None');
+            
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Sending...';
+            submitButton.disabled = true;
+            
+            try {
+                await fetch(formUrl, {
+                    method: 'POST',
+                    body: formData,
+                    mode: 'no-cors'
+                });
+                
+                alert('✅ Booking request sent! I\'ll text you within 24 hours to schedule a meet and greet.');
+                
+                this.reset();
+                document.getElementById('totalPrice').textContent = '$0';
+                document.getElementById('priceBreakdown').style.display = 'none';
+                if (marker) {
+                    map.removeLayer(marker);
+                    marker = null;
+                }
+                document.getElementById('locationWarning').style.display = 'none';
+                document.getElementById('locationError').style.display = 'none';
+                document.getElementById('locationSuccess').style.display = 'none';
+                
+            } catch (error) {
+                alert('❌ Oops! Something went wrong. Please try again or contact me directly.');
+                console.error('Submission error:', error);
+            } finally {
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }
         });
     </script>
 </body>

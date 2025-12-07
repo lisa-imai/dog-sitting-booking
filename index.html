@@ -519,8 +519,8 @@
                 basePrice = 80;
                 breakdown.push('5-8 hour visit: $80');
             } else if (hours <= 12) {
-                basePrice = (hours * 10);
-                breakdown.push(`+${hours} hour: ${basePrice}`);
+                basePrice = Math.ceil(hours) * 10;
+                breakdown.push(`${Math.ceil(hours)} hours @ $10/hr: $${basePrice}`);
             } else {
                 document.getElementById('totalPrice').textContent = 'Too long';
                 document.getElementById('priceBreakdown').innerHTML = '<div>Maximum 12 hours on weekdays, 6 hours on weekends</div>';
@@ -574,15 +574,16 @@
             const date = new Date(visitDate);
             const isWeekend = date.getDay() === 0 || date.getDay() === 6;
             const endHr = parseInt(endTime.split(':')[0]);
-            const isEvening = endHr >= 18;
+            const endMin = parseInt(endTime.split(':')[1]);
+            const isEvening = endHr > 18 || (endHr === 18 && endMin > 0);
             
             let addOns = [];
             if (puppyCare) addOns.push('Puppy/High Attention/Extra Dog');
             if (isEvening || isWeekend) addOns.push(isWeekend ? 'Weekend' : 'Evening');
             const addOnsText = addOns.length > 0 ? addOns.join(', ') : 'None';
             
-            const formId = '1Qxfj3Q9fIzCYlnYbPkK99yqYrnfuDBSf9tlW2Cw3lO8';
-            const formUrl = `https://docs.google.com/forms/d/${formId}/formResponse`;
+            const formId = '1FAIpQLSefT3pa4j6kmPbqt58UcVVWXR19rKJjP3PiV6oPar8vTzCMtA';
+            const formUrl = `https://docs.google.com/forms/d/e/${formId}/formResponse`;
             
             const formData = new FormData();
             formData.append('entry.387284207', visitDate);

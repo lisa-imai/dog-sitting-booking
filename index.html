@@ -510,19 +510,17 @@
                 basePrice = 40;
                 breakdown.push('1-hour visit: $40');
             } else if (hours <= 2) {
-                basePrice = 59;
-                breakdown.push('2-hour visit: $59');
+                basePrice = 60;
+                breakdown.push('2-hour visit: $60');
             } else if (hours <= 4) {
-                basePrice = 69;
-                breakdown.push('3-4 hour visit: $69');
+                basePrice = 70;
+                breakdown.push('3-4 hour visit: $70');
             } else if (hours <= 8) {
-                basePrice = 79;
-                breakdown.push('5-8 hour visit: $79');
+                basePrice = 80;
+                breakdown.push('5-8 hour visit: $80');
             } else if (hours <= 12) {
-                const extraHours = Math.ceil(hours - 8);
-                basePrice = 79 + (extraHours * 10);
-                breakdown.push('8 hours: $79');
-                breakdown.push(`+${extraHours} additional hour(s): ${extraHours * 10}`);
+                basePrice = (hours * 10);
+                breakdown.push(`+${hours} hour: ${basePrice}`);
             } else {
                 document.getElementById('totalPrice').textContent = 'Too long';
                 document.getElementById('priceBreakdown').innerHTML = '<div>Maximum 12 hours on weekdays, 6 hours on weekends</div>';
